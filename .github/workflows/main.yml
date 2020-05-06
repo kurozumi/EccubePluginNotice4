@@ -1,7 +1,7 @@
 name: CI/CD for EC-CUBE4 PLUGIN
 on: push
 env:
-  PLUGIN_CODE: CustomerClassOnlyPage4
+  PLUGIN_CODE: EccubePluginNotice4
 jobs:
   mysql:
     name: MySQL
