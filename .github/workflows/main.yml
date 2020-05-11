@@ -1,7 +1,5 @@
 name: CI/CD for EC-CUBE4 PLUGIN
 on: push
-env:
-  PLUGIN_CODE: EccubePluginNotice4
 jobs:
   mysql:
     name: MySQL
@@ -38,7 +36,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tar cvzf $HOME/$PLUGIN_CODE.tar.gz ./*
+          tar cvzf $HOME/${{ github.event.repository.name }}.tar.gz ./*
           git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/EC-CUBE/ec-cube.git -b ${{ matrix.eccube-versions }} --depth 1
 
       - name: Install Composer
@@ -58,8 +56,8 @@ jobs:
       - name: Install Plugin
         run: |
           cd ec-cube
-          bin/console eccube:plugin:install --path=$HOME/$PLUGIN_CODE.tar.gz
-          bin/console eccube:plugin:enable --code=$PLUGIN_CODE
+          bin/console eccube:plugin:install --path=$HOME/${{ github.event.repository.name }}.tar.gz
+          bin/console eccube:plugin:enable --code=${{ github.event.repository.name }}
         env:
           DATABASE_URL: mysql://root:root@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/eccube_db
           DATABASE_SERVER_VERSION: ${{ matrix.mysql-versions }}
@@ -67,7 +65,7 @@ jobs:
       - name: Run Tests
         run: |
           cd ec-cube
-          bin/phpunit app/Plugin/$PLUGIN_CODE/Tests
+          bin/phpunit app/Plugin/${{ github.event.repository.name }}/Tests
         env:
           DATABASE_URL: mysql://root:root@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/eccube_db
           DATABASE_SERVER_VERSION: ${{ matrix.mysql-versions }}
@@ -108,7 +106,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          tar cvzf $HOME/$PLUGIN_CODE.tar.gz ./*
+          tar cvzf $HOME/${{ github.event.repository.name }}.tar.gz ./*
           git clone https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/EC-CUBE/ec-cube.git -b ${{ matrix.eccube-versions }} --depth 1
 
       - name: Install Composer
@@ -128,8 +126,8 @@ jobs:
       - name: Install Plugin
         run: |
           cd ec-cube
-          bin/console eccube:plugin:install --path=$HOME/$PLUGIN_CODE.tar.gz
-          bin/console eccube:plugin:enable --code=$PLUGIN_CODE
+          bin/console eccube:plugin:install --path=$HOME/${{ github.event.repository.name }}.tar.gz
+          bin/console eccube:plugin:enable --code=${{ github.event.repository.name }}
         env:
           DATABASE_URL: postgres://postgres:password@127.0.0.1:${{ job.services.postgres.ports['5432'] }}/eccube_db
           DATABASE_SERVER_VERSION: ${{ matrix.postgres-versions }}
@@ -137,7 +135,7 @@ jobs:
       - name: Run Tests
         run: |
           cd ec-cube
-          bin/phpunit app/Plugin/$PLUGIN_CODE/Tests
+          bin/phpunit app/Plugin/${{ github.event.repository.name }}/Tests
         env:
           DATABASE_URL: postgres://postgres:password@127.0.0.1:${{ job.services.postgres.ports['5432'] }}/eccube_db
           DATABASE_SERVER_VERSION: ${{ matrix.postgres-versions }}
